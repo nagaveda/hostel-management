@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {faUniversity} from "@fortawesome/free-solid-svg-icons"
 
 class Navbar extends Component {
   constructor() {
@@ -54,7 +56,8 @@ class Navbar extends Component {
       <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Hostel-Management
+          <FontAwesomeIcon icon={faUniversity}/>  
+            {`  Hostel-Management`}
           </Link>
           <button
             className="navbar-toggler"
