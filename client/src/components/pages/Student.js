@@ -42,6 +42,28 @@ class Student extends Component {
                 console.log(err)
             );
         }
+        else if (this.state.findBy === 'block') {
+            await axios.get(`/api/student/block/${this.state.val}`).then((res) => {
+                this.setState({ data: res, loading: false });
+                console.log(res);
+                if (!res.data.length) {
+                    alert("Not Found");
+                }
+            }).catch(err =>
+                console.log(err)
+            );
+        }
+        else if (this.state.findBy === 'batch') {
+            await axios.get(`/api/student/batch/${this.state.val}`).then((res) => {
+                this.setState({ data: res, loading: false });
+                console.log(res);
+                if (!res.data.length) {
+                    alert("Not Found");
+                }
+            }).catch(err =>
+                console.log(err)
+            );
+        }
         else if (this.state.findBy === 'room') {
             await axios.get(`/api/student/room/${this.state.val}`).then((res) => {
                 this.setState({ data: res, loading: false });
@@ -175,6 +197,8 @@ class Student extends Component {
                     >   <option value="" defaultValue disabled>Select</option>
                         <option value="id">Student Id</option>
                         <option value="room">Room No.</option>
+                        <option value="block">Block.</option>
+                        <option value="batch">Batch.</option>
                         <option value="isAvailable">Absent/Present</option>
                     </select>
                     <input type="text" id="val" placeholder="Value"

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport')
+const blockLimit = require('../../config/keys').blockLimit;
 
 // Student models
 const Student = require("../../models/Student")
@@ -9,11 +10,12 @@ const StudentValidation = require('../../validation/student')
 // POST
 
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const { email, id } = req.body
+  const { email, id, block } = req.body
 
   const { errors, isValid } = StudentValidation(req.body)
 
   if (!isValid) return res.status(400).json(errors)
+
 
   Student.findOne({
     $or: [
@@ -24,10 +26,20 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
     if (currentUser) {
       res.status(400).json({ error: 'Student with this id or email already exists.' })
     } else {
-      const newStudent = new Student(req.body)
-      newStudent.save()
-        .then(student => res.json(student))
-        .catch(err => res.status(500).json({ error: 'Failed to save new student in the DB', err }))
+      Student.find({block})
+      .then(students => {
+         if(students.length === blockLimit){
+          res.status(500).json({error: 'Max Limit reached in the Block '+block+'!' });
+         }
+         else{
+          const newStudent = new Student(req.body)
+          newStudent.save()
+            .then(student => res.json(student))
+            .catch(err => res.status(500).json({ error: 'Failed to save new student in the DB', err }))
+         }
+      })
+      
+      
     }
   })
 
@@ -64,7 +76,25 @@ router.get('/id/:id', passport.authenticate('jwt', { session: false }), (req, re
     .catch(err => console.log({ error: 'Failed to fetch students', err }))
 })
 
+// Get students filtered by block
+router.get('/block/:block', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const { block } = req.params;
 
+  Student.find({ block })
+    .then(students => res.json(students))
+    .catch(err => console.log({ error: 'Failed to fetch students', err }))
+})
+
+//Get students filtered by batch
+router.get('/batch/:batch', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const { batch } = req.params;
+
+  Student.find({ batch })
+    .then(students => res.json(students))
+    .catch(err => console.log({ error: 'Failed to fetch students', err }))
+})
+
+// Get all students
 router.get('/all', (req, res) => {
   Student.find()
     .then(students => res.json(students))

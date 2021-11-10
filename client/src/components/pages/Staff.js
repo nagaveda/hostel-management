@@ -152,7 +152,7 @@ class Staff extends Component {
                                 <th scope="col">Delete?</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody>                         
                             {tableContent}
                         </tbody>
                     </table> : <div style={{ display: 'flex', justifyContent: 'center' }}><ReactLoading type="bars" color="#f56f42" /></div>}
